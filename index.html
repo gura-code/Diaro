@@ -8,7 +8,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #ffffff; /* Sfondo bianco come richiesto */
+            background-color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -30,7 +30,6 @@
             border-radius: 4px;
         }
 
-        /* Schermata della Copertina */
         .cover-view {
             width: 100%;
             height: 100%;
@@ -45,11 +44,10 @@
             box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
         }
 
-        /* Schermata delle due pagine aperte */
         .pages-view {
             width: 100%;
             height: 100%;
-            display: none; /* Nascosto all'inizio */
+            display: none;
             background-color: #e3dec3;
         }
 
@@ -80,13 +78,13 @@
 </head>
 <body>
 
-    <div class="diary-container" id="diary" onclick="handleDiaryClick()">
+    <div class="diary-container" id="diary" onclick="handleDiaryClick(event)">
         <!-- STATO 0: La Copertina Chiusa -->
         <div class="cover-view" id="coverView">
             Il Mio Diario
         </div>
 
-        <!-- STATO 1: Le Due Pagine Aperte (Sinistra e Destra) -->
+        <!-- STATO 1: Le Due Pagine Aperte con i tuoi file esatti -->
         <div class="pages-view" id="pagesView">
             <div class="page-left">
                 <img src="pagina-sinistra.png" alt="Pagina Sinistra">
@@ -100,7 +98,7 @@
     <div class="instruction" id="instructionText">Clicca sulla copertina per aprire il diario</div>
 
     <script>
-        let currentState = 0; // 0 = Chiuso (Copertina), 1 = Aperto (Pagine)
+        let currentState = 0;
 
         function handleDiaryClick(event) {
             const coverView = document.getElementById('coverView');
@@ -108,14 +106,11 @@
             const instructionText = document.getElementById('instructionText');
 
             if (currentState === 0) {
-                // Passa da Chiuso ad Aperto
                 coverView.style.display = 'none';
                 pagesView.style.display = 'flex';
                 instructionText.innerText = "Clicca sulla pagina di destra per chiudere il diario";
                 currentState = 1;
             } else {
-                // Se siamo aperti, controlliamo se il click è avvenuto sulla pagina di destra o sinistra
-                // Vogliamo che si chiuda solo cliccando sulla pagina di destra
                 if (event && event.target.closest('#rightPage')) {
                     pagesView.style.display = 'none';
                     coverView.style.display = 'flex';
@@ -128,4 +123,3 @@
 
 </body>
 </html>
-
