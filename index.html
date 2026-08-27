@@ -29,83 +29,89 @@
             transform-style: preserve-3d;
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             cursor: pointer;
-            background-color: #e3dec3;
         }
 
-        .page {
+        /* Pagine di sinistra e destra fisse sotto */
+        .spread {
             position: absolute;
-            width: 50%;
-            height: 100%;
-            top: 0;
-            transform-style: preserve-3d;
-            transform-origin: left;
-            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-        }
-
-        .page.front {
-            left: 50%;
-            z-index: 2;
-        }
-
-        .page.back {
-            left: 0;
-            z-index: 1;
-            transform: rotateY(0deg);
-        }
-
-        /* Stato 1: Libretto Chiuso (Copertina) */
-        .book.step-0 .page.front {
-            transform: rotateY(0deg);
-        }
-
-        /* Stato 2: Libro Aperto (Mostra Sinistra e Destra) */
-        .book.step-1 .page.front {
-            transform: rotateY(-180deg);
-        }
-
-        /* Stato 3: Chiusura Finale */
-        .book.step-2 .page.front {
-            transform: rotateY(-360deg);
-        }
-
-        .page-content {
             width: 100%;
             height: 100%;
-            position: absolute;
-            backface-visibility: hidden;
+            display: flex;
+            background-color: #e3dec3;
+            z-index: 1;
+        }
+
+        .spread-left, .spread-right {
+            width: 50%;
+            height: 100%;
             background-size: cover;
             background-position: center;
         }
 
-        /* Copertina personalizzabile */
+        .spread-left {
+            background-image: url('pagina-sinistra.png');
+            border-right: 1px solid #d0c9a9;
+        }
+
+        .spread-right {
+            background-image: url('pagina-destra.png');
+        }
+
+        /* Copertina che si sfoglia */
+        .cover-page {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            top: 0;
+            left: 50%;
+            transform-style: preserve-3d;
+            transform-origin: left;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+            z-index: 10;
+        }
+
+        .cover-front, .cover-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+        }
+
         .cover-front {
             background-color: #3b2314;
+            color: #d4af37;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #d4af37;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
-            border-left: 5px solid #22130a;
             box-shadow: inset 5px 0 15px rgba(0,0,0,0.5);
+            border-left: 5px solid #22130a;
         }
 
         .cover-back {
             background-color: #3b2314;
             transform: rotateY(180deg);
-            border-right: 5px solid #22130a;
+            box-shadow: inset -5px 0 15px rgba(0,0,0,0.5);
         }
 
-        .page-left {
-            background-image: url('pagina-sinistra.png');
+        /* Stati del libro */
+        /* Step 0: Chiuso sulla copertina */
+        .book.step-0 .cover-page {
+            transform: rotateY(0deg);
+            z-index: 10;
         }
 
-        .page-right {
-            background-image: url('pagina-destra.png');
-            left: 50%;
-            position: absolute;
-            width: 50%;
-            height: 100%;
+        /* Step 1: Aperto (mostra sinistra e destra) */
+        .book.step-1 .cover-page {
+            transform: rotateY(-180deg);
+            z-index: 0; /* Va dietro alle pagine aperte */
+        }
+
+        /* Step 2: Chiuso sul retro */
+        .book.step-2 .cover-page {
+            transform: rotateY(-360deg);
+            z-index: 10;
         }
 
         .instruction {
@@ -120,38 +126,51 @@
 <body>
 
     <div class="book-container">
-        <div class="book step-0" id="myBook" onclick="turnPage()">
-            <!-- Pagina mobile / Copertina -->
-            <div class="page front">
-                <div class="page-content cover-front">
-                    Il Mio Diario
-                </div>
-                <div class="page-content cover-back"></div>
+        <!-- Aggiunto un click specifico sulla pagina di destra per la chiusura -->
+        <div class="book step-0" id="myBook">
+            
+            <!-- Pagine interne fisse (Sotto) -->
+            <div class="spread">
+                <div class="spread-left"></div>
+                <div class="spread-right" onclick="handleRightPageClick(event)"></div>
             </div>
 
-            <!-- Pagine fisse sottostanti -->
-            <div class="page-content page-left"></div>
-            <div class="page-content page-right"></div>
+            <!-- Copertina mobile (Sopra) -->
+            <div class="cover-page" onclick="handleCoverClick(event)">
+                <div class="cover-front">
+                    Il Mio Diario
+                </div>
+                <div class="cover-back"></div>
+            </div>
+
         </div>
     </div>
 
-    <div class="instruction">Clicca sul libro per girare pagina</div>
+    <div class="instruction">Clicca sulla copertina o sulla pagina per girare</div>
 
     <script>
         let currentStep = 0;
         const book = document.getElementById('myBook');
 
-        function turnPage() {
-            currentStep++;
-            if (currentStep > 2) {
-                currentStep = 0; // Ricomincia da capo se si clicca ancora
+        function handleCoverClick(event) {
+            event.stopPropagation();
+            if (currentStep === 0) {
+                currentStep = 1; // Apre il libro
+                book.className = 'book step-1';
+            } else if (currentStep === 2) {
+                currentStep = 0; // Torna alla copertina iniziale
+                book.className = 'book step-0';
             }
-            
-            // Rimuove gli step precedenti e aggiunge quello attuale
-            book.className = 'book step-' + currentStep;
+        }
+
+        function handleRightPageClick(event) {
+            event.stopPropagation();
+            if (currentStep === 1) {
+                currentStep = 2; // Chiude il libro mostrando il retro
+                book.className = 'book step-2';
+            }
         }
     </script>
 
 </body>
 </html>
-
