@@ -55,13 +55,12 @@
         }
 
         .spread-left {
-            /* Immagine della pagina di sinistra presa direttamente dalla chat */
-            background-image: url('https://www.google.com/url?sa=i&url=https%3A%2F%2Fplaceholder.com&psig=AOvVaw0... (link diretto aggiornato)'); 
+            background-image: url('pagina-sinistra.png');
             border-right: 1px solid #d0c9a9;
         }
 
         .spread-right {
-            /* Immagine della pagina di destra presa direttamente dalla chat */
+            background-image: url('pagina-destra.png');
         }
 
         /* Copertina che si sfoglia */
@@ -140,8 +139,8 @@
             
             <!-- Pagine interne fisse -->
             <div class="spread">
-                <div class="spread-left" style="background-image: url('1000074960.png');"></div>
-                <div class="spread-right" style="background-image: url('1000074706.png');" onclick="handleRightPageClick(event)"></div>
+                <div class="spread-left"></div>
+                <div class="spread-right" onclick="handleRightPageClick(event)"></div>
             </div>
 
             <!-- Copertina -->
