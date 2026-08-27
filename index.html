@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il mio Diario</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #2b2b2b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .book-container {
+            perspective: 1500px;
+        }
+
+        .book {
+            width: 800px;
+            height: 550px;
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            cursor: pointer;
+            background-color: #e3dec3;
+        }
+
+        .page {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            top: 0;
+            transform-style: preserve-3d;
+            transform-origin: left;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        .page.front {
+            left: 50%;
+            z-index: 2;
+        }
+
+        .page.back {
+            left: 0;
+            z-index: 1;
+            transform: rotateY(0deg);
+        }
+
+        /* Stato 1: Libretto Chiuso (Copertina) */
+        .book.step-0 .page.front {
+            transform: rotateY(0deg);
+        }
+
+        /* Stato 2: Libro Aperto (Mostra Sinistra e Destra) */
+        .book.step-1 .page.front {
+            transform: rotateY(-180deg);
+        }
+
+        /* Stato 3: Chiusura Finale */
+        .book.step-2 .page.front {
+            transform: rotateY(-360deg);
+        }
+
+        .page-content {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Copertina personalizzabile */
+        .cover-front {
+            background-color: #3b2314;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #d4af37;
+            font-size: 28px;
+            font-weight: bold;
+            border-left: 5px solid #22130a;
+            box-shadow: inset 5px 0 15px rgba(0,0,0,0.5);
+        }
+
+        .cover-back {
+            background-color: #3b2314;
+            transform: rotateY(180deg);
+            border-right: 5px solid #22130a;
+        }
+
+        .page-left {
+            background-image: url('pagina-sinistra.png');
+        }
+
+        .page-right {
+            background-image: url('pagina-destra.png');
+            left: 50%;
+            position: absolute;
+            width: 50%;
+            height: 100%;
+        }
+
+        .instruction {
+            color: #bbb;
+            margin-top: 20px;
+            font-size: 14px;
+            letter-spacing: 1px;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="book-container">
+        <div class="book step-0" id="myBook" onclick="turnPage()">
+            <!-- Pagina mobile / Copertina -->
+            <div class="page front">
+                <div class="page-content cover-front">
+                    Il Mio Diario
+                </div>
+                <div class="page-content cover-back"></div>
+            </div>
+
+            <!-- Pagine fisse sottostanti -->
+            <div class="page-content page-left"></div>
+            <div class="page-content page-right"></div>
+        </div>
+    </div>
+
+    <div class="instruction">Clicca sul libro per girare pagina</div>
+
+    <script>
+        let currentStep = 0;
+        const book = document.getElementById('myBook');
+
+        function turnPage() {
+            currentStep++;
+            if (currentStep > 2) {
+                currentStep = 0; // Ricomincia da capo se si clicca ancora
+            }
+            
+            // Rimuove gli step precedenti e aggiunge quello attuale
+            book.className = 'book step-' + currentStep;
+        }
+    </script>
+
+</body>
+</html>
+
