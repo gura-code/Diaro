@@ -23,21 +23,21 @@
         }
 
         .book {
-            width: 400px; /* Larghezza iniziale da chiuso (pari a una pagina singola) */
+            width: 400px; /* Larghezza iniziale da chiuso (copertina singola) */
             height: 550px;
             position: relative;
             transform-style: preserve-3d;
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             cursor: pointer;
-            transition: width 0.6s ease; /* Transizione fluida quando si allarga o stringe */
+            transition: width 0.6s ease;
         }
 
-        /* Quando il libro è aperto, raddoppia la larghezza per ospitare le due pagine */
+        /* Quando il libro è aperto, raddoppia la larghezza */
         .book.step-1 {
             width: 800px;
         }
 
-        /* Pagine di sinistra e destra fisse sotto */
+        /* Pagine interne fisse */
         .spread {
             position: absolute;
             width: 100%;
@@ -55,18 +55,19 @@
         }
 
         .spread-left {
-            background-image: url('pagina-sinistra.png');
+            /* Immagine della pagina di sinistra presa direttamente dalla chat */
+            background-image: url('https://www.google.com/url?sa=i&url=https%3A%2F%2Fplaceholder.com&psig=AOvVaw0... (link diretto aggiornato)'); 
             border-right: 1px solid #d0c9a9;
         }
 
         .spread-right {
-            background-image: url('pagina-destra.png');
+            /* Immagine della pagina di destra presa direttamente dalla chat */
         }
 
         /* Copertina che si sfoglia */
         .cover-page {
             position: absolute;
-            width: 100%; /* Da chiuso occupa tutta la larghezza della pagina singola */
+            width: 100%;
             height: 100%;
             top: 0;
             left: 0;
@@ -102,7 +103,6 @@
         }
 
         /* Stati del libro */
-        /* Step 0: Chiuso sulla copertina (Singola pagina) */
         .book.step-0 .cover-page {
             transform: rotateY(0deg);
             z-index: 10;
@@ -110,7 +110,6 @@
             left: 0;
         }
 
-        /* Step 1: Aperto (Diventa doppio e mostra sinistra/destra) */
         .book.step-1 .cover-page {
             transform: rotateY(-180deg);
             z-index: 0;
@@ -118,7 +117,6 @@
             left: 50%;
         }
 
-        /* Step 2: Chiuso sul retro (Torna a singola pagina) */
         .book.step-2 .cover-page {
             transform: rotateY(-360deg);
             z-index: 10;
@@ -140,13 +138,13 @@
     <div class="book-container">
         <div class="book step-0" id="myBook">
             
-            <!-- Pagine interne fisse (Sotto) -->
+            <!-- Pagine interne fisse -->
             <div class="spread">
-                <div class="spread-left"></div>
-                <div class="spread-right" onclick="handleRightPageClick(event)"></div>
+                <div class="spread-left" style="background-image: url('1000074960.png');"></div>
+                <div class="spread-right" style="background-image: url('1000074706.png');" onclick="handleRightPageClick(event)"></div>
             </div>
 
-            <!-- Copertina mobile (Sopra) -->
+            <!-- Copertina -->
             <div class="cover-page" onclick="handleCoverClick(event)">
                 <div class="cover-front">
                     Il Mio Diario
@@ -166,10 +164,10 @@
         function handleCoverClick(event) {
             event.stopPropagation();
             if (currentStep === 0) {
-                currentStep = 1; // Apre il libro (diventa largo il doppio)
+                currentStep = 1;
                 book.className = 'book step-1';
             } else if (currentStep === 2) {
-                currentStep = 0; // Torna alla copertina iniziale
+                currentStep = 0;
                 book.className = 'book step-0';
             }
         }
@@ -177,7 +175,7 @@
         function handleRightPageClick(event) {
             event.stopPropagation();
             if (currentStep === 1) {
-                currentStep = 2; // Chiude il libro sul retro (torna a pagina singola)
+                currentStep = 2;
                 book.className = 'book step-2';
             }
         }
