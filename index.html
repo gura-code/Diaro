@@ -3,122 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Il mio Diario</title>
+    <title>Il Mio Diario</title>
     <style>
-        body {
+        /* Reset e impostazioni di base */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body {
             background-color: #ffffff;
+            font-family: 'Georgia', serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
-            flex-direction: column;
         }
 
-        .diary-container {
-            width: 800px;
-            height: 550px;
+        /* Contenitore principale */
+        .container {
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            background-color: #f9f8f4;
-            border-radius: 4px;
         }
 
-        .cover-view {
-            width: 100%;
-            height: 100%;
+        /* Stile della copertina del diario */
+        .copertina {
             background-color: #3b2314;
-            color: #d4af37;
+            color: #d4af37; /* Colore dorato */
+            width: 300px;
+            height: 420px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 36px;
+            border-radius: 4px 8px 8px 4px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            font-size: 24px;
             font-weight: bold;
-            letter-spacing: 2px;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
-        }
-
-        .pages-view {
-            width: 100%;
-            height: 100%;
-            display: none;
-            background-color: #e3dec3;
-        }
-
-        .page-left, .page-right {
-            width: 50%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .page-left {
-            border-right: 1px solid #d0c9a9;
-        }
-
-        .page-left img, .page-right img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .instruction {
-            color: #666;
-            margin-top: 20px;
-            font-size: 14px;
-            letter-spacing: 1px;
+            text-align: center;
+            padding: 20px;
+            border-left: 15px solid #27170c; /* Effetto rilegatura */
             user-select: none;
+        }
+
+        /* Contenitore delle pagine interne (inizialmente nascosto) */
+        .pagine-aperte {
+            display: none;
+            gap: 0; /* Nessun spazio tra le pagine per simulare un libro aperto */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            user-select: none;
+        }
+
+        /* Stile delle singole immagini delle pagine */
+        .pagina {
+            width: 350px;
+            height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Solo la pagina di destra deve essere cliccabile per chiudere */
+        .pagina-destra {
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <div class="diary-container" id="diary" onclick="handleDiaryClick(event)">
-        <!-- STATO 0: La Copertina Chiusa -->
-        <div class="cover-view" id="coverView">
+    <div class="container">
+        <!-- Copertina del Diario -->
+        <div id="copertina" class="copertina">
             Il Mio Diario
         </div>
 
-        <!-- STATO 1: Le Due Pagine Aperte con i tuoi file esatti -->
-        <div class="pages-view" id="pagesView">
-            <div class="page-left">
-                <img src="pagina-sinistra.png" alt="Pagina Sinistra">
-            </div>
-            <div class="page-right" id="rightPage">
-                <img src="pagina-destra.png" alt="Pagina Destra">
-            </div>
+        <!-- Pagine Aperte (Sinistra e Destra) -->
+        <div id="pagineAperte" class="pagine-aperte">
+            <img src="pagina-sinistra.png" alt="Pagina Sinistra" class="pagina">
+            <img src="pagina-destra.png" alt="Pagina Destra" class="pagina pagina-destra" id="paginaDestra" title="Clicca per chiudere">
         </div>
     </div>
 
-    <div class="instruction" id="instructionText">Clicca sulla copertina per aprire il diario</div>
-
     <script>
-        let currentState = 0;
+        const copertina = document.getElementById('copertina');
+        const pagineAperte = document.getElementById('pagineAperte');
+        const paginaDestra = document.getElementById('paginaDestra');
 
-        function handleDiaryClick(event) {
-            const coverView = document.getElementById('coverView');
-            const pagesView = document.getElementById('pagesView');
-            const instructionText = document.getElementById('instructionText');
+        // Quando clicchi sulla copertina, questa scompare e appaiono le pagine
+        copertina.addEventListener('click', function() {
+            copertina.style.display = 'none';
+            pagineAperte.style.display = 'flex';
+        });
 
-            if (currentState === 0) {
-                coverView.style.display = 'none';
-                pagesView.style.display = 'flex';
-                instructionText.innerText = "Clicca sulla pagina di destra per chiudere il diario";
-                currentState = 1;
-            } else {
-                if (event && event.target.closest('#rightPage')) {
-                    pagesView.style.display = 'none';
-                    coverView.style.display = 'flex';
-                    instructionText.innerText = "Clicca sulla copertina per aprire il diario";
-                    currentState = 0;
-                }
-            }
-        }
+        // Quando clicchi specificamente sulla pagina di destra, il diario si chiude
+        paginaDestra.addEventListener('click', function(event) {
+            // Impedisce che il click si propaga ad altri elementi
+            event.stopPropagation();
+            
+            pagineAperte.style.display = 'none';
+            copertina.style.display = 'flex';
+        });
     </script>
 
 </body>
